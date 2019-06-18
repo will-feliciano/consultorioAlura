@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Medico;
+use App\Helper\MedicoFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,23 +19,19 @@ class MedicosController extends AbstractController{
 
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    public function __construct(EntityManagerInterface $entityManager, MedicoFactory $medicoHelper){
        $this->entityManager = $entityManager;
+       $this->medicoHelper = $medicoHelper;
     }
 
     /**
      * @Route("/medicos", methods={"POST"})
      */
-
     public function novo(Request $req): Response{
 
-        $dadosRec = $req->getContent();
-        $dadosRec = json_decode($dadosRec);       
+        $dadosRec = $req->getContent();        
+        $doctor = $this->medicoHelper->criarMedico($dadosRec);
         
-        $doctor = new Medico();
-        $doctor->crm = $dadosRec->crm;
-        $doctor->name = $dadosRec->nome;
-
         $this->entityManager->persist($doctor);
         $this->entityManager->flush();
 
@@ -56,13 +53,55 @@ class MedicosController extends AbstractController{
     /**
      * @Route("/medicos/{id}", methods={"GET"})
      */
-    public function doctor(Request $req): Response{
-        $id = $req->get('id');
+    public function doctor(int $id): Response{
+                
+        $doctor = $this->buscaMedico($id);
+        $cod = is_null($doctor)? Response::HTTP_NO_CONTENT : 200;
+        return new JsonResponse($doctor, $cod);
+    }
+
+    /**
+     * @Route("/medicos/{id}", methods={"PUT"})
+     */
+    public function editDoctor(int $id, Request $req){
+
+        $dadosRecebidos = $req->getContent();
+        $novoMedico = $this->medicoHelper->criarMedico($dadosRecebidos);
+        
+        $existente = $this->buscaMedico($id);        
+
+        if(is_null($existente)){
+            return new Response('', Response::HTTP_NOT_FOUND);
+        }
+
+        $existente->crm = $novoMedico->crm;
+        $existente->name = $novoMedico->name;
+
+        $this->entityManager->flush();
+
+        return new JsonResponse($existente);
+    }
+
+    /**
+     * @Route("/medicos/{id}", methods={"DELETE"})
+     */
+    public function removeDoctor(int $id){
+        $medico = $this->buscaMedico($id);
+        $this->entityManager->remove($medico);
+        $this->entityManager->flush();
+
+        return new Response('', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param int $id
+     * @return object|null
+     */
+    public function buscaMedico(int $id){
+
         $repo = $this
             ->getDoctrine()
             ->getRepository(Medico::class);
-        $doctor = $repo->find($id);
-
-        return new JsonResponse($doctor);
+        return $repo->find($id);
     }
 }
