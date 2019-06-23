@@ -23,8 +23,9 @@ final class Version20190619175500 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE especialidade (id INT AUTO_INCREMENT NOT NULL, descricao VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE medico (id INT AUTO_INCREMENT NOT NULL, especialidade_id INT NOT NULL, crm INT NOT NULL, name VARCHAR(255) NOT NULL, INDEX IDX_34E5914C3BA9BFA5 (especialidade_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE medico ADD especialidade_id INT NOT NULL');
         $this->addSql('ALTER TABLE medico ADD CONSTRAINT FK_34E5914C3BA9BFA5 FOREIGN KEY (especialidade_id) REFERENCES especialidade (id)');
+        $this->addSql('CREATE INDEX IDX_34E5914C3BA9BFA5 ON medico (especialidade_id)');
     }
 
     public function down(Schema $schema) : void
@@ -34,6 +35,7 @@ final class Version20190619175500 extends AbstractMigration
 
         $this->addSql('ALTER TABLE medico DROP FOREIGN KEY FK_34E5914C3BA9BFA5');
         $this->addSql('DROP TABLE especialidade');
-        $this->addSql('DROP TABLE medico');
+        $this->addSql('DROP INDEX IDX_34E5914C3BA9BFA5 ON medico');
+        $this->addSql('ALTER TABLE medico DROP especialidade_id');
     }
 }

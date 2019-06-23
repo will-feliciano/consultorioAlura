@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Especialidade;
+use App\Repository\EspecialidadeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,11 +16,19 @@ class EspecialidadesController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager){
+    /**
+     * @var EspecialidadeRepository
+     */
+    private $repository;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EspecialidadeRepository $repository
+    ) {
         $this->entityManager = $entityManager;
+        $this->repository = $repository;
     }
 
     /**
@@ -37,4 +46,50 @@ class EspecialidadesController extends AbstractController
 
         return new JsonResponse($especialidade);
     }
+
+    /**
+     * @Route("/especialidades", methods={"GET"})
+     */
+    public function allEspecs(): Response{
+        
+        $listEspecs = $this->repository->findAll();
+
+        return new JsonResponse($listEspecs);
+    }
+
+    /**
+     * @Route("/especialidades/{id}", methods={"GET"})
+     */
+    public function especialidade(int $id): Response{
+
+        return new JsonResponse($this->repository->find($id));
+    }
+
+    /**
+     * @Route("/especialidades/{id}", methods={"PUT"})
+     */
+    public function editEspec(int $id, Request $req): Response{
+
+        $dadosRec = json_decode($req->getContent());
+        
+        $especialidade = $this->repository->find($id);
+        $especialidade->setDescricao($dadosRec->descricao);
+
+        $this->entityManager->flush();
+
+        return new JsonResponse($especialidade);
+    }
+
+    /**
+     * @Route("/especialidades/{id}", methods={"DELETE"})
+     */
+    public function removeEspec(int $id): Response{
+
+        $espec = $this->repository->find($id);
+        $this->entityManager->remove($espec);
+        $this->entityManager->flush();
+
+        return new Response('', Response::HTTP_NO_CONTENT);
+    }
+
 }
