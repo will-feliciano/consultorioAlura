@@ -67,9 +67,9 @@ class Medico implements \JsonSerializable{
 
     public function JsonSerialize(){
         return [
-            'id' => getId(),
-            'nome' => getNome(),
-            'crm' => getCrm(),
+            'id' => $this->getId(),
+            'nome' => $this->getNome(),
+            'crm' => $this->getCrm(),
             'especialidadeId' => $this->getEspecialidade()->getId()
         ];
     }

@@ -74,7 +74,9 @@ class MedicosController extends AbstractController{
             return new Response('', Response::HTTP_NOT_FOUND);
         }
 
-        $existente->setCrm($novoMedico->getCrm())->setName($novoMedico->getName());
+        $existente
+            ->setCrm($novoMedico->getCrm())
+            ->setNome($novoMedico->getNome());
         
         $this->entityManager->flush();
 
