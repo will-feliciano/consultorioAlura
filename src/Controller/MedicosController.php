@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Medico;
-use App\Helper\MedicoFactory;
+use App\Repository\MedicosRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Helper\MedicoFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,12 +17,26 @@ class MedicosController extends AbstractController{
     /**
      * @var EntityManagerInterface
      */
-
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, MedicoFactory $medicoHelper){
+    /**
+     * @var MedicoFactory
+     */
+    private $medicoHelper;
+
+    /**
+     * @var MedicosRepository
+     */
+    private $medicosRepository;
+
+    public function __construct(
+        EntityManagerInterface $entityManager, 
+        MedicoFactory $medicoHelper,
+        MedicosRepository $medicosRepository
+    ){
        $this->entityManager = $entityManager;
        $this->medicoHelper = $medicoHelper;
+       $this->medicosRepository = $medicosRepository;
     }
 
     /**
@@ -42,11 +57,8 @@ class MedicosController extends AbstractController{
      * @Route("/medicos", methods={"GET"})
      */
     public function allDoctors(): Response{
-        $repo = $this
-            ->getDoctrine()
-            ->getRepository(Medico::class);
-        $listDoctors = $repo->findAll();
 
+        $listDoctors = $this->medicosRepository->findAll();
         return new JsonResponse($listDoctors);
     }
 
@@ -99,10 +111,19 @@ class MedicosController extends AbstractController{
      * @return object|null
      */
     public function buscaMedico(int $id){
+        
+        return $this->medicosRepository->find($id);
+    }
 
-        $repo = $this
-            ->getDoctrine()
-            ->getRepository(Medico::class);
-        return $repo->find($id);
+    /**
+     * @Route("/especialidades/{especialidadeId}/medicos", methods={"GET"})
+     */
+    public function getDoctorsForSpecs(int $especialidadeId){
+        
+        $medicos = $this->medicosRepository->findBy([
+            'especialidade' => $especialidadeId
+        ]);
+
+        return new JsonResponse($medicos);       
     }
 }
