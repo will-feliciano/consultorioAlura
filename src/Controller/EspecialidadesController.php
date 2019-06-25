@@ -5,75 +5,68 @@ namespace App\Controller;
 use App\Entity\Especialidade;
 use App\Repository\EspecialidadeRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+//use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EspecialidadesController extends AbstractController
+class EspecialidadesController extends BaseController
 {
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
-
     /**
      * @var EspecialidadeRepository
      */
-    private $repository;
+    private $especialidadesRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        EspecialidadeRepository $repository
+        EspecialidadeRepository $especialidadesRepository
     ) {
+        parent::__construct($especialidadesRepository);
         $this->entityManager = $entityManager;
-        $this->repository = $repository;
+        $this->repository = $especialidadesRepository;
     }
 
     /**
      * @Route("/especialidades", methods={"POST"})
      */
-    public function nova(Request $req): Response
+    public function nova(Request $request): Response
     {
-        $dadosRec = json_decode($req->getContent());
-        
+        $dadosRequest = $request->getContent();
+        $dadosEmJson = json_decode($dadosRequest);
+
         $especialidade = new Especialidade();
-        $especialidade->setDescricao($dadosRec->descricao);
+        $especialidade->setDescricao($dadosEmJson->descricao);
 
         $this->entityManager->persist($especialidade);
         $this->entityManager->flush();
 
         return new JsonResponse($especialidade);
-    }
-
-    /**
-     * @Route("/especialidades", methods={"GET"})
-     */
-    public function allEspecs(): Response{
-        
-        $listEspecs = $this->repository->findAll();
-
-        return new JsonResponse($listEspecs);
-    }
+    }    
 
     /**
      * @Route("/especialidades/{id}", methods={"GET"})
      */
-    public function especialidade(int $id): Response{
-
+    public function buscarUma(int $id): Response
+    {
         return new JsonResponse($this->repository->find($id));
     }
 
     /**
      * @Route("/especialidades/{id}", methods={"PUT"})
      */
-    public function editEspec(int $id, Request $req): Response{
+    public function atualiza(int $id, Request $request): Response
+    {
+        $dadosRequest = $request->getContent();
+        $dadosEmJson = json_decode($dadosRequest);
 
-        $dadosRec = json_decode($req->getContent());
-        
         $especialidade = $this->repository->find($id);
-        $especialidade->setDescricao($dadosRec->descricao);
+        $especialidade
+            ->setDescricao($dadosEmJson->descricao);
 
         $this->entityManager->flush();
 
@@ -83,13 +76,12 @@ class EspecialidadesController extends AbstractController
     /**
      * @Route("/especialidades/{id}", methods={"DELETE"})
      */
-    public function removeEspec(int $id): Response{
-
-        $espec = $this->repository->find($id);
-        $this->entityManager->remove($espec);
+    public function remove(int $id): Response
+    {
+        $especialidade = $this->repository->find($id);
+        $this->entityManager->remove($especialidade);
         $this->entityManager->flush();
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
-
 }

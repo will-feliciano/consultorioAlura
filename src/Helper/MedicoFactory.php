@@ -5,26 +5,30 @@ namespace App\Helper;
 use App\Entity\Medico;
 use App\Repository\EspecialidadeRepository;
 
-class MedicoFactory{
-
+class MedicoFactory
+{
     /**
      * @var EspecialidadeRepository
      */
     private $especialidadeRepository;
 
-    public function __construct(EspecialidadeRepository $especialidadeRepository){
+    public function __construct(EspecialidadeRepository $especialidadeRepository)
+    {
         $this->especialidadeRepository = $especialidadeRepository;
     }
 
-    public function criarMedico(string $json){
+    public function criarMedico(string $json): Medico
+    {
+        $dadoEmJson = json_decode($json);
+        $especialidadeId = $dadoEmJson->especialidadeId;
+        $especialidade = $this->especialidadeRepository->find($especialidadeId);
 
-        $doctorRec = json_decode($json);
-        $especId = $doctorRec->especialidadeId;
-        $especialidade = $this->especialidadeRepository->find($especId);
-            
-        $novoMedico = new Medico();
-        $novoMedico->setCrm($doctorRec->crm)->setNome($doctorRec->nome)->setEspecialidade($especialidade);
+        $medico = new Medico();
+        $medico
+            ->setCrm($dadoEmJson->crm)
+            ->setNome($dadoEmJson->nome)
+            ->setEspecialidade($especialidade);
 
-        return $novoMedico;
+        return $medico;
     }
 }

@@ -38,7 +38,8 @@ class Especialidade implements \JsonSerializable
         return $this;
     }
 
-    public function JsonSerialize(){
+    public function jsonSerialize()
+    {
         return [
             'id' => $this->getId(),
             'descricao' => $this->getDescricao()

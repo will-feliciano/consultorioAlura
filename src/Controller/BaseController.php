@@ -2,25 +2,21 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController extends AbstractController{
-
-    /**
-     * @var ObjectController
-     */
-    private $repository;
 
     public function __construct(ObjectRepository $repository){
         $this->repository = $repository;
     }
+    
+    public function getAll(): Response
+    {
+        $entityList = $this->repository->findAll();
 
-    public function buscarTodos(): Response{
-
-        $medicoList = $this->medicosRepository->findAll();
-
-        return new JsonResponse($medicoList);
+        return new JsonResponse($entityList);
     }
 }
-

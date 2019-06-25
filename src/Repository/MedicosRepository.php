@@ -6,10 +6,10 @@ use App\Entity\Medico;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class MedicoRepository extends ServiceEntityRepository
+class MedicosRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Medico::class); 
+        parent::__construct($registry, Medico::class);
     }
 }

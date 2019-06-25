@@ -7,22 +7,20 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EspecialidadeRepository")
  */
-class Medico implements \JsonSerializable{
-
+class Medico implements \JsonSerializable
+{
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column (type="integer")
+     * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
-     * @ORM\Column (type="integer")
+     * @ORM\Column(type="integer")
      */
     private $crm;
-
     /**
-     * @ORM\Column (type="string")
+     * @ORM\Column(type="string")
      */
     private $nome;
 
@@ -32,25 +30,30 @@ class Medico implements \JsonSerializable{
      */
     private $especialidade;
 
-    public function getId(): ?int{
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function getCrm(): ?int{
+    public function getCrm(): ?int
+    {
         return $this->crm;
     }
 
-    public function setCrm(int $crm): self{
+    public function setCrm(int $crm): self
+    {
         $this->crm = $crm;
         return $this;
     }
 
-    public function getNome(): ?string{
+    public function getNome(): ?string
+    {
         return $this->nome;
     }
 
-    public function setNome(string $name): self{
-        $this->nome = $name;
+    public function setNome(string $nome): self
+    {
+        $this->nome = $nome;
         return $this;
     }
 
@@ -62,16 +65,17 @@ class Medico implements \JsonSerializable{
     public function setEspecialidade(?Especialidade $especialidade): self
     {
         $this->especialidade = $especialidade;
+
         return $this;
     }
 
-    public function JsonSerialize(){
+    public function jsonSerialize()
+    {
         return [
             'id' => $this->getId(),
-            'nome' => $this->getNome(),
             'crm' => $this->getCrm(),
+            'nome' => $this->getNome(),
             'especialidadeId' => $this->getEspecialidade()->getId()
         ];
     }
-
 }
