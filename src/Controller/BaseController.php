@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController extends AbstractController{
+    
+    /**
+     * @var ObjectRepository
+     */
+    protected $repository;
 
     public function __construct(ObjectRepository $repository){
         $this->repository = $repository;
