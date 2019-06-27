@@ -8,10 +8,37 @@ especialidades:
   methods:
     - GET
 
+especialidade:
+  path: /especialidades/{id}
+  controller: App\Controller\EspecialidadesController::getOne
+  methods:
+    - GET
+
+removeEspecialidade:
+  path: /especialidades/{id}
+  controller: App\Controller\EspecialidadesController::remove
+  methods:
+    - DELETE
+
+
+
 medicos:
   path: /medicos
   controller: App\Controller\MedicosController::getAll
   methods:
     - GET
 
-    
+medico:
+  path: /medicos/{id}
+  controller: App\Controller\MedicosController::getOne
+  methods:
+    - GET
+
+removeMedico:
+  path: /medicos/{id}
+  controller: App\Controller\MedicosController::remove
+  methods:
+    - DELETE
+
+
+
