@@ -10,12 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class BaseController extends AbstractController{
-    
-    /**
-     * @var ObjectRepository
-     */
-    protected $repository;
+abstract class BaseController extends AbstractController{   
 
     /**
      * @var EntityManagerInterface
@@ -23,17 +18,22 @@ abstract class BaseController extends AbstractController{
     protected $entityManager;
 
     /**
+     * @var ObjectRepository
+     */
+    protected $repository;
+
+    /**
      * @var EntidadeFactoryInterface
      */
     protected $factory;
 
-    public function __construct(
-        ObjectRepository $repository, 
+    public function __construct(        
         EntityManagerInterface $entityManager,
+        ObjectRepository $repository, 
         EntidadeFactoryInterface $factory
     ){
-        $this->repository = $repository;
         $this->entityManager = $entityManager;
+        $this->repository = $repository;        
         $this->factory = $factory;
     }
     

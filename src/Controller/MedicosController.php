@@ -26,9 +26,9 @@ class MedicosController extends BaseController
     public function __construct(
         EntityManagerInterface $entityManager,
         MedicoFactory $medicoFactory,
-        MedicosRepository $repository
+        MedicosRepository $medicosRepository
     ) {
-        parent::__construct($entityManager, $repository, $medicoFactory);        
+        parent::__construct($entityManager, $medicosRepository, $medicoFactory);        
         $this->medicoFactory = $medicoFactory;
         $this->medicosRepository = $medicosRepository;       
     }
