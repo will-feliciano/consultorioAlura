@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Helper\EntidadeFactoryInterface;
+use App\Helper\ExtractDataRequest;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,26 +28,40 @@ abstract class BaseController extends AbstractController{
      */
     protected $factory;
 
+    /**
+     * @var ExtractDataRequest
+     */
+    private $extractData;
+
     public function __construct(        
         EntityManagerInterface $entityManager,
         ObjectRepository $repository, 
-        EntidadeFactoryInterface $factory
+        EntidadeFactoryInterface $factory,
+        ExtractDataRequest $extractData
     ){
         $this->entityManager = $entityManager;
         $this->repository = $repository;        
         $this->factory = $factory;
+        $this->extractData = $extractData;
     }
     
-    public function getAll(): Response
+    public function getAll(Request $req): Response
     {
-        return new JsonResponse($this->repository->findAll());
+        $order = $this->extractData->getDataOrder($req);
+        $filter = $this->extractData->getDataFilter($req); 
+        [$paginaAtual, $itensPorPagina] = $this->extractData->getQtdePages($req);              
+        return new JsonResponse($this->repository->findBy(
+            $filter, 
+            $order,
+            $itensPorPagina,
+            ($paginaAtual - 1) * $itensPorPagina
+        ));
     }
     
     public function getOne(int $id): Response
     {
         $item = $this->repository->find($id);
         $cod = is_null($item) ? Response::HTTP_NO_CONTENT : 200;
-
         return new JsonResponse($item, $cod);
     }
 

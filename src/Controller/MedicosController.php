@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Medico;
 use App\Helper\MedicoFactory;
+use App\Helper\ExtractDataRequest;
 use App\Repository\MedicosRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,9 +27,10 @@ class MedicosController extends BaseController
     public function __construct(
         EntityManagerInterface $entityManager,
         MedicoFactory $medicoFactory,
-        MedicosRepository $medicosRepository
+        MedicosRepository $medicosRepository,
+        ExtractDataRequest $extractData
     ) {
-        parent::__construct($entityManager, $medicosRepository, $medicoFactory);        
+        parent::__construct($entityManager, $medicosRepository, $medicoFactory, $extractData);        
         $this->medicoFactory = $medicoFactory;
         $this->medicosRepository = $medicosRepository;       
     }

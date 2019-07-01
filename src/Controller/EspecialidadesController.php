@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Especialidade;
 use App\Helper\EspecialidadeFactory;
+use App\Helper\ExtractDataRequest;
 use App\Repository\EspecialidadeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,9 +17,10 @@ class EspecialidadesController extends BaseController
     public function __construct(
         EntityManagerInterface $entityManager,
         EspecialidadeRepository $repository,
-        EspecialidadeFactory $factory
+        EspecialidadeFactory $factory,
+        ExtractDataRequest $extractData
     ) {
-        parent::__construct($entityManager, $repository, $factory);
+        parent::__construct($entityManager, $repository, $factory, $extractData);
     }
         
 
