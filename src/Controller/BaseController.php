@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
-use App\Helper\EntidadeFactoryInterface;
+use App\Helper\ResponseFactory;
 use App\Helper\ExtractDataRequest;
-use Doctrine\Common\Persistence\ObjectRepository;
+use App\Helper\EntidadeFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 abstract class BaseController extends AbstractController{   
 
@@ -50,19 +51,38 @@ abstract class BaseController extends AbstractController{
         $order = $this->extractData->getDataOrder($req);
         $filter = $this->extractData->getDataFilter($req); 
         [$paginaAtual, $itensPorPagina] = $this->extractData->getQtdePages($req);              
-        return new JsonResponse($this->repository->findBy(
+        
+        $lista = $this->repository->findBy(
             $filter, 
             $order,
             $itensPorPagina,
             ($paginaAtual - 1) * $itensPorPagina
-        ));
+        );
+
+        $resposta = new ResponseFactory(
+            true,
+            $lista,
+            Response::HTTP_OK,
+            $paginaAtual,
+            $itensPorPagina            
+        );
+        
+        return $resposta->getResponse();
+
     }
     
     public function getOne(int $id): Response
     {
         $item = $this->repository->find($id);
-        $cod = is_null($item) ? Response::HTTP_NO_CONTENT : 200;
-        return new JsonResponse($item, $cod);
+        $cod = is_null($item) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK;
+        
+        $resposta = new ResponseFactory(
+            true,            
+            $item,
+            $cod
+        );
+
+        return $resposta->getResponse();       
     }
 
     public function novo(Request $request): Response
