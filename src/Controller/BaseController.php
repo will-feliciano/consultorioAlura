@@ -105,9 +105,23 @@ abstract class BaseController extends AbstractController{
             $entidadeExistente = $this->atualizaEntidadeExistente($id, $entidade);
             $this->entityManager->flush();
 
-            return new JsonResponse($entidadeExistente);
+            $resposta = new ResponseFactory(
+                true,
+                $entidadeExistente,
+                Response::HTTP_OK
+            );
+
+            return $resposta->getResponse();
+
         } catch (\InvalidArgumentException $ex) {
-            return new Response('', Response::HTTP_NOT_FOUND);
+
+            $resposta = new ResponseFactory(
+                false,
+                "Recurso não encontrado",
+                Response::HTTP_NOT_FOUND
+            );
+
+            return $resposta->getResponse();
         }
     }
 

@@ -33,6 +33,12 @@ medico:
   controller: App\Controller\MedicosController::getOne
   methods:
     - GET
+    
+editMedico:
+  path: /medicos/{id}
+  controller: App\Controller\MedicosController::edit
+  methods:
+    - PUT
 
 removeMedico:
   path: /medicos/{id}
