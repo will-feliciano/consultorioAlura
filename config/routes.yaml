@@ -14,6 +14,18 @@ especialidade:
   methods:
     - GET
 
+addEspecialidade:
+  path: /especialidades
+  controller: App\Controller\EspecialidadesController::novo
+  methods:
+    - POST
+
+editEspecialidade:
+  path: /especialidades/{id}
+  controller: App\Controller\EspecialidadesController::edit
+  methods:
+    - PUT
+
 removeEspecialidade:
   path: /especialidades/{id}
   controller: App\Controller\EspecialidadesController::remove
@@ -33,6 +45,12 @@ medico:
   controller: App\Controller\MedicosController::getOne
   methods:
     - GET
+
+addMedico:
+  path: /medicos
+  controller: App\Controller\MedicosController::novo
+  methods:
+    - POST
     
 editMedico:
   path: /medicos/{id}
